@@ -1,29 +1,42 @@
-import '../styles/globals.css';
-import { Footer } from '../components/footer';
-import { Header } from '../components/header';
+import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
+import clsx from 'clsx';
+
+import { Providers } from '@/app/providers';
+
+import '@/styles/globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter'
+});
+
+const monaSans = localFont({
+  src: '../fonts/Mona-Sans.var.woff2',
+  display: 'swap',
+  variable: '--font-mona-sans',
+  weight: '200 900'
+});
 
 export const metadata = {
-    title: {
-        template: '%s | Netlify',
-        default: 'Netlify Starter'
-    }
+  title: {
+    template: '%s | Fast Storage',
+    default: 'Fast Storage'
+  },
+  description: 'Store and Share your digital assets with Fast Storage.'
 };
 
 export default function RootLayout({ children }) {
-    return (
-        <html lang="en" data-theme="lofi">
-            <head>
-                <link rel="icon" href="/favicon.svg" sizes="any" />
-            </head>
-            <body className="antialiased text-white bg-blue-900">
-                <div className="flex flex-col min-h-screen px-6 bg-grid-pattern sm:px-12">
-                    <div className="flex flex-col w-full max-w-5xl mx-auto grow">
-                        <Header />
-                        <div className="grow">{children}</div>
-                        <Footer />
-                    </div>
-                </div>
-            </body>
-        </html>
-    );
+  return (
+    <html
+      lang="en"
+      className={clsx('h-full scroll-smooth antialiased', inter.variable, monaSans.variable)}
+      suppressHydrationWarning
+    >
+      <body className="flex min-h-full flex-col bg-white dark:bg-gray-950">
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
 }
