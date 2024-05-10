@@ -1,12 +1,19 @@
 import { auth } from 'app/auth';
-import { redirect } from 'next/navigation';
+import { userDao } from '../../backend/dao/dao';
 
 export default async function Page() {
   const session = await auth();
-  if (!session) {
-    redirect('/');
-  }
   console.log(session);
+  const user = await userDao.get(session.user.email, 'User');
+  console.log('User', user);
+  if (!user) {
+    await userDao.create({
+      pk: session.user.email,
+      sk: 'User',
+      name: session.user.name,
+      image: session.user.image
+    });
+  }
   // const session = {
   //   user: {
   //     name: 'Hai Le Gia',

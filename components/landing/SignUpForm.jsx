@@ -1,4 +1,4 @@
-import { signInFromLanding } from '@/app/actions/landing';
+import { signInFromLanding } from '@/actions/landing/landing';
 import { Button } from '@/components/landing/Button';
 
 export function SignUpForm() {

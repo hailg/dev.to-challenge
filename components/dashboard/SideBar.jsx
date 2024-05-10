@@ -1,16 +1,29 @@
+'use client';
+
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Cog6ToothIcon, FolderIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { usePathname } from 'next/navigation';
+
 import { Logo } from '@/components/landing/Logo';
 import clsx from 'clsx';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Projects', href: '#', icon: FolderIcon, current: false }
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
+  { name: 'Products', href: '/dashboard/products', icon: FolderIcon, current: false }
 ];
 const developers = [{ id: 1, name: 'API Keys', href: '#', initial: 'A', current: false }];
 
 const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
+  const pathname = usePathname();
+  console.log('pathname', pathname);
+  if (pathname === '/dashboard') {
+    navigation[0].current = true;
+    navigation[1].current = false;
+  } else if (pathname === '/dashboard/products') {
+    navigation[0].current = false;
+    navigation[1].current = true;
+  }
   return (
     <div>
       <Transition.Root show={sidebarOpen} as={Fragment}>
