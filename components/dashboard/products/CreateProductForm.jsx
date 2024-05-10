@@ -206,7 +206,7 @@ const CreateProductForm = ({ onClose }) => {
           aria-disabled={isSubmitting}
           disabled={isSubmitting}
         >
-          Create Product
+          {isSubmitting ? 'Creating Product...' : 'Create Product'}
         </button>
         <button
           type="button"
