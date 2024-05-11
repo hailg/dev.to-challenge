@@ -4,8 +4,8 @@ import React, { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useDropzone } from 'react-dropzone';
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { createProduct } from '@/actions/products/create-product';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 const baseStyle = {
   flex: 1,
@@ -212,6 +212,9 @@ const CreateProductForm = ({ onClose }) => {
           type="button"
           className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
           onClick={() => {
+            reset();
+            setProductFile(null);
+            setProductPhoto(null);
             if (onClose) {
               onClose();
             }

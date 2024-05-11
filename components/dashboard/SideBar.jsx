@@ -16,7 +16,6 @@ const developers = [{ id: 1, name: 'API Keys', href: '#', initial: 'A', current:
 
 const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
   const pathname = usePathname();
-  console.log('pathname', pathname);
   if (pathname === '/dashboard') {
     navigation[0].current = true;
     navigation[1].current = false;
@@ -185,7 +184,7 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                   ))}
                 </ul>
               </li>
-              <li className="mt-auto">
+              {/* <li className="mt-auto">
                 <a
                   href="#"
                   className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
@@ -193,7 +192,7 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                   <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
                   Settings
                 </a>
-              </li>
+              </li> */}
             </ul>
           </nav>
         </div>

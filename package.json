@@ -24,6 +24,7 @@
     "bright": "^0.8.5",
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.1.0",
+    "dayjs": "^1.11.11",
     "feed": "^4.2.2",
     "markdown-to-jsx": "^7.4.5",
     "mdast-util-to-string": "^4.0.0",

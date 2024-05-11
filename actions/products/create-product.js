@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { getStore } from '@netlify/blobs';
 import { productDao } from '@/backend/dao/dao';
 import { revalidatePath } from 'next/cache';
+import { BLOB_STORE } from '@/constants';
 
 function getUniqueFileName(fileName) {
   const extension = fileName.split('.').pop();
@@ -18,7 +19,7 @@ export async function createProduct(formData) {
     };
   }
   const userId = session.user.email;
-  const store = getStore(userId);
+  const store = getStore(BLOB_STORE);
   const name = formData.get('name');
   const description = formData.get('description');
   const photo = formData.get('photo');
@@ -35,20 +36,29 @@ export async function createProduct(formData) {
   }
   const photoKey = photo ? getUniqueFileName(photo.name) : undefined;
   const fileKey = getUniqueFileName(file.name);
+  const productId = nanoid();
   const product = {
-    pk: nanoid(),
+    pk: productId,
     sk: 'Product',
     name,
     description,
     userId,
     photo: photoKey,
     file: fileKey,
+    fileName: file.name,
     downloadCount: 0
   };
   const photoBinary = await photo.arrayBuffer();
   const fileBinary = await file.arrayBuffer();
   try {
-    await Promise.all([store.set(photoKey, photoBinary), store.set(fileKey, fileBinary)]);
+    await Promise.all([
+      store.set(photoKey, photoBinary, {
+        metadata: { contentType: photo.type, productId, type: 'photo' }
+      }),
+      store.set(fileKey, fileBinary, {
+        metadata: { contentType: file.type, fileName: file.name, productId, type: 'file' }
+      })
+    ]);
     await productDao.create(product);
     revalidatePath('/dashboard/products');
     return {

@@ -1,6 +1,7 @@
 import { auth } from 'app/auth';
 import { USER_GSI, productDao } from '../../../backend/dao/dao';
 import EmptyState from '@/components/dashboard/products/EmptyState';
+import ProductsTableSection from '@/components/dashboard/products/ProductsTableSection';
 
 export default async function Page() {
   const session = await auth();
@@ -20,19 +21,15 @@ export default async function Page() {
       </>
     );
   }
-  console.log('Products', products);
-  // const session = {
-  //   user: {
-  //     name: 'Hai Le Gia',
-  //     email: 'hailegia@gmail.com',
-  //     image: 'https://avatars.githubusercontent.com/u/731508?v=4'
-  //   },
-  //   expires: '2024-06-06T17:37:56.980Z'
-  // };
+  products.forEach((product) => {
+    product.downloadLink = `${process.env.BASE_URL}/api/product/data?key=${product.file}`;
+    if (product.photo) {
+      product.image = `${process.env.BASE_URL}/api/product/data?key=${product.photo}`;
+    }
+  });
   return (
-    <div>
-      Projects
-      <pre>{JSON.stringify(session, null, 2)}</pre>
-    </div>
+    <>
+      <ProductsTableSection products={products} />
+    </>
   );
 }
