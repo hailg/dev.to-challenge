@@ -1,4 +1,4 @@
-import { QueryCommand, PutCommand, GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, PutCommand, GetCommand, UpdateCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { ReturnValue, DynamoDB } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import exp from 'constants';
@@ -47,10 +47,10 @@ export class Dao {
       .map(([key, value]) => `#${key} = :${key}`)
       .join(', ');
     commandInput.UpdateExpression = `SET ${updateExpression}`;
-    commandInput.ExpressionAttributeNames = Object.entries(itemRecord)
+    commandInput.ExpressionAttributeNames = Object.entries(item)
       .filter(([key, value]) => value !== undefined && value !== null)
       .reduce((acc, [key, value]) => ({ ...acc, [`#${key}`]: key }), {});
-    const expressionAttributeValues = Object.entries(itemRecord)
+    const expressionAttributeValues = Object.entries(item)
       .filter(([key, value]) => value !== undefined && value !== null)
       .reduce((acc, [key, value]) => ({ ...acc, [`:${key}`]: value }), {});
     if (conditionExpressionValues) {
@@ -63,6 +63,7 @@ export class Dao {
     }
     const command = new UpdateCommand(commandInput);
     await this.dynamoDBClient.send(command);
+    console.log('Updated', commandInput);
     return item;
   }
 
@@ -199,6 +200,21 @@ export class Dao {
     }
     return limit && limit > result.length ? result.slice(0, args.limit) : result;
   }
+
+  async delete(partitionKeyValue, sortKeyValue = null) {
+    const key = {
+      [this.partitionKey]: partitionKeyValue
+    };
+    if (this.sortKey && sortKeyValue !== undefined && sortKeyValue !== null) {
+      key[this.sortKey] = sortKeyValue;
+    }
+    const commandProps = {
+      TableName: this.tableName,
+      Key: key
+    };
+    const command = new DeleteCommand(commandProps);
+    await this.dynamoDBClient.send(command);
+  }
 }
 
 export const dynamoDBClient = DynamoDBDocument.from(
@@ -222,5 +238,6 @@ export const dynamoDBClient = DynamoDBDocument.from(
 
 export const userDao = new Dao(dynamoDBClient, 'User', 'FastStorage', 'pk', 'sk');
 export const productDao = new Dao(dynamoDBClient, 'Product', 'FastStorage', 'pk', 'sk');
+export const productLinkDao = new Dao(dynamoDBClient, 'ProductLink', 'FastStorage', 'pk', 'sk');
 export const productVersionDao = new Dao(dynamoDBClient, 'ProductVersion', 'FastStorage', 'pk', 'sk');
 export const USER_GSI = 'userId-classType-index';

@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useDropzone } from 'react-dropzone';
-import { createProduct } from '@/actions/products/create-product';
+import { updateProduct } from '@/actions/products/update-product';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 const baseStyle = {
@@ -35,7 +35,7 @@ const rejectStyle = {
   borderColor: '#ff1744'
 };
 
-const CreateProductForm = ({ onClose }) => {
+const UpdateProductForm = ({ onClose, product }) => {
   const { register, handleSubmit, reset } = useForm();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,14 +86,6 @@ const CreateProductForm = ({ onClose }) => {
 
   const onSubmit = async (data) => {
     setErrorMessage('');
-    if (!productFile) {
-      setErrorMessage('Please select a product file.');
-      return;
-    }
-    if (!data.name) {
-      setErrorMessage('Please enter a product name.');
-      return;
-    }
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -102,11 +94,13 @@ const CreateProductForm = ({ onClose }) => {
     if (productPhoto) {
       formData.append('photo', productPhoto);
     }
-    formData.append('file', productFile);
+    if (productFile) {
+      formData.append('file', productFile);
+    }
     try {
-      const result = await createProduct(formData);
+      const result = await updateProduct(product.pk, formData);
       if (!result) {
-        setErrorMessage('An error occurred while creating the product. Please try again.');
+        setErrorMessage('An error occurred while updating the product. Please try again.');
         setIsSubmitting(false);
         return;
       }
@@ -125,10 +119,9 @@ const CreateProductForm = ({ onClose }) => {
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);
-      setErrorMessage('An error occurred while creating the product. Please try again.');
+      setErrorMessage('An error occurred while updating the product. Please try again.');
     }
   };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {errorMessage && (
@@ -156,7 +149,7 @@ const CreateProductForm = ({ onClose }) => {
                 autoCorrect="false"
                 inputMode="text"
                 autoCapitalize="words"
-                required
+                defaultValue={product.name}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="My Cool Product"
                 {...register('name')}
@@ -174,7 +167,7 @@ const CreateProductForm = ({ onClose }) => {
               rows={2}
               autoCapitalize="sentences"
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              defaultValue={''}
+              defaultValue={product.description}
               placeholder="Say something about your product..."
               {...register('description')}
             />
@@ -215,7 +208,7 @@ const CreateProductForm = ({ onClose }) => {
           aria-disabled={isSubmitting}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Creating Product...' : 'Create Product'}
+          {isSubmitting ? 'Updating Product...' : 'Update Product'}
         </button>
         <button
           type="button"
@@ -236,4 +229,4 @@ const CreateProductForm = ({ onClose }) => {
   );
 };
 
-export default CreateProductForm;
+export default UpdateProductForm;

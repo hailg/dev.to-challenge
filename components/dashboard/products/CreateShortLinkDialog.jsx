@@ -2,18 +2,22 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { parse } from 'path';
+import { createProductLink } from '@/actions/products/create-product-link';
+import { CheckIcon } from '@heroicons/react/20/solid';
 
 const CreateShortLinkDialog = ({ open, setOpen, product }) => {
   const { register, handleSubmit, reset } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [generatedLink, setGeneratedLink] = useState('');
+  const [generatedLinkCopied, setGeneratedLinkCopied] = useState(false);
 
   const onSubmit = async (data) => {
-    console.log(data);
+    setGeneratedLink('');
+    setGeneratedLinkCopied(false);
     try {
       parseInt(data.duration);
     } catch (error) {
@@ -37,15 +41,17 @@ const CreateShortLinkDialog = ({ open, setOpen, product }) => {
     }
     setIsSubmitting(true);
     try {
-      // const result = await createShortLink(data);
-      // if (!result) {
-      //   setErrorMessage('An error occurred while creating the short link. Please try again.');
-      // }
-      // if (result.error) {
-      //   setErrorMessage(result.error);
-      // }
+      const result = await createProductLink(product.pk, duration);
+      if (!result) {
+        setErrorMessage('An error occurred while creating the short link. Please try again.');
+        return;
+      }
+      if (result.error) {
+        setErrorMessage(result.error);
+        return;
+      }
+      setGeneratedLink(result.data.productLink.link);
       reset();
-      setOpen(false);
     } catch (error) {
       console.error(error);
       setErrorMessage('An error occurred while creating the short link. Please try again.');
@@ -96,6 +102,44 @@ const CreateShortLinkDialog = ({ open, setOpen, product }) => {
                       </div>
                     </div>
                   )}
+                  {generatedLink && (
+                    <div className="border-l-4 border-green-400 bg-green-50 p-4">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm text-green-700">
+                            <h3
+                              className="cursor-pointer flex-wrap text-wrap text-sm font-medium text-green-800"
+                              onClick={() => {
+                                navigator.clipboard.writeText(generatedLink);
+                                setGeneratedLinkCopied(true);
+                                setTimeout(() => {
+                                  reset();
+                                  setGeneratedLink('');
+                                  setGeneratedLinkCopied(false);
+                                  setOpen(false);
+                                }, 3000);
+                              }}
+                            >
+                              Well done! Your link is ready. Click here to copy it!
+                            </h3>
+                            <div className="mt-1 text-sm text-green-700">
+                              {generatedLinkCopied && (
+                                <p>
+                                  <span className="flex text-sm font-semibold text-indigo-600">
+                                    Copied
+                                    <CheckIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
+                                  </span>
+                                </p>
+                              )}
+                            </div>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <div className="col-span-full">
                       <label htmlFor="duration" className="block text-sm font-medium leading-6 text-gray-900">
@@ -139,10 +183,12 @@ const CreateShortLinkDialog = ({ open, setOpen, product }) => {
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
                       onClick={() => {
                         reset();
+                        setGeneratedLink('');
+                        setGeneratedLinkCopied(false);
                         setOpen(false);
                       }}
                     >
-                      Cancel
+                      Close
                     </button>
                   </div>
                 </form>

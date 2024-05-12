@@ -95,8 +95,8 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                         </ul>
                       </li>
                       <li>
-                        <div className="text-xs font-semibold leading-6 text-gray-400">Developer Settings</div>
-                        <ul role="list" className="-mx-2 mt-2 space-y-1">
+                        {/* <div className="text-xs font-semibold leading-6 text-gray-400">Developer Settings</div> */}
+                        {/* <ul role="list" className="-mx-2 mt-2 space-y-1">
                           {developers.map((team) => (
                             <li key={team.name}>
                               <a
@@ -115,9 +115,9 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                               </a>
                             </li>
                           ))}
-                        </ul>
+                        </ul> */}
                       </li>
-                      <li className="mt-auto">
+                      {/* <li className="mt-auto">
                         <a
                           href="#"
                           className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
@@ -125,7 +125,7 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                           <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
                           Settings
                         </a>
-                      </li>
+                      </li> */}
                     </ul>
                   </nav>
                 </div>
@@ -164,8 +164,8 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                 </ul>
               </li>
               <li>
-                <div className="text-xs font-semibold leading-6 text-gray-400">Developer Settings</div>
-                <ul role="list" className="-mx-2 mt-2 space-y-1">
+                {/* <div className="text-xs font-semibold leading-6 text-gray-400">Developer Settings</div> */}
+                {/* <ul role="list" className="-mx-2 mt-2 space-y-1">
                   {developers.map((team) => (
                     <li key={team.name}>
                       <a
@@ -182,7 +182,7 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
                       </a>
                     </li>
                   ))}
-                </ul>
+                </ul> */}
               </li>
               {/* <li className="mt-auto">
                 <a

@@ -2,7 +2,7 @@
 import { auth } from '@/app/auth';
 import { nanoid } from 'nanoid';
 import { getStore } from '@netlify/blobs';
-import { productDao } from '@/backend/dao/dao';
+import { productDao, userDao } from '@/backend/dao/dao';
 import { revalidatePath } from 'next/cache';
 import { BLOB_STORE } from '@/constants';
 
@@ -19,6 +19,7 @@ export async function createProduct(formData) {
     };
   }
   const userId = session.user.email;
+  const user = await userDao.get(userId, 'User');
   const store = getStore(BLOB_STORE);
   const name = formData.get('name');
   const description = formData.get('description');
@@ -59,7 +60,15 @@ export async function createProduct(formData) {
         metadata: { contentType: file.type, fileName: file.name, productId, type: 'file' }
       })
     ]);
-    await productDao.create(product);
+    await Promise.all([
+      productDao.create(product),
+      userDao.update({
+        pk: userId,
+        sk: 'User',
+        productCount: user.productCount + 1
+      })
+    ]);
+    revalidatePath('/dashboard');
     revalidatePath('/dashboard/products');
     return {
       data: {

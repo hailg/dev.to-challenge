@@ -21,10 +21,13 @@ export default async function Page() {
       </>
     );
   }
+  products.sort((a, b) => {
+    return b.updatedAt - a.updatedAt;
+  });
   products.forEach((product) => {
-    product.downloadLink = `${process.env.BASE_URL}/api/product/data?key=${product.file}`;
+    product.downloadLink = `${process.env.BASE_URL}/api/product/data/${product.pk}`;
     if (product.photo) {
-      product.image = `${process.env.BASE_URL}/api/product/data?key=${product.photo}`;
+      product.image = `${process.env.BASE_URL}/api/product/photo/${product.photo}`;
     }
   });
   return (
