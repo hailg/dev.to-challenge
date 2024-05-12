@@ -49,9 +49,10 @@ export async function createProduct(formData) {
     fileName: file.name,
     downloadCount: 0
   };
-  const photoBinary = await photo.arrayBuffer();
-  const fileBinary = await file.arrayBuffer();
   try {
+    console.log('Creating product');
+    const photoBinary = await photo.arrayBuffer();
+    const fileBinary = await file.arrayBuffer();
     await Promise.all([
       store.set(photoKey, photoBinary, {
         metadata: { contentType: photo.type, productId, type: 'photo' }
@@ -60,6 +61,7 @@ export async function createProduct(formData) {
         metadata: { contentType: file.type, fileName: file.name, productId, type: 'file' }
       })
     ]);
+    console.log('Product data created');
     await Promise.all([
       productDao.create(product),
       userDao.update({
