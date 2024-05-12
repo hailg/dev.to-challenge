@@ -75,7 +75,7 @@ export default function DeleteProduct({ open, setOpen, product }) {
                         </div>
                       )}
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to delete "{product.name}"? This action cannot be undone.
+                        Are you sure you want to delete &quot;{product.name}&quot;? This action cannot be undone.
                       </p>
                     </div>
                   </div>
